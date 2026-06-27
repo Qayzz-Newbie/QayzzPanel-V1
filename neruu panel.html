@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NERUU PANEL V1</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#050505;
+overflow:hidden;
+color:white;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 20% 20%,rgba(255,0,0,.25),transparent 30%),
+radial-gradient(circle at 80% 80%,rgba(255,0,0,.25),transparent 30%);
+animation:bgmove 8s linear infinite;
+}
+
+@keyframes bgmove{
+50%{
+transform:scale(1.15);
+}
+}
+
+.panel{
+width:390px;
+background:#111;
+border:2px solid #ff0000;
+border-radius:20px;
+padding:20px;
+box-shadow:0 0 25px #ff0000;
+position:relative;
+z-index:2;
+}
+
+h1{
+text-align:center;
+margin-bottom:15px;
+color:#ff4040;
+}
+
+input{
+width:100%;
+padding:12px;
+border:none;
+outline:none;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.main-btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#ff0000;
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:.25s;
+}
+
+.main-btn:hover{
+transform:scale(1.03);
+}
+
+#menu{
+display:none;
+}
+
+.switch-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#1b1b1b;
+padding:12px;
+border-radius:12px;
+margin-top:10px;
+}
+
+.switch-btn{
+width:90px;
+padding:8px;
+border:none;
+border-radius:30px;
+background:#444;
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.switch-btn.active{
+background:#00d85f;
+box-shadow:0 0 15px #00ff88;
+}
+
+.progress-box{
+display:none;
+margin-top:15px;
+}
+
+.progress{
+width:100%;
+height:18px;
+background:#222;
+border-radius:20px;
+overflow:hidden;
+}
+
+.bar{
+width:0%;
+height:100%;
+background:linear-gradient(90deg,#ff0000,#00ff66);
+}
+
+.status{
+margin-top:10px;
+text-align:center;
+font-weight:bold;
+}
+
+.popup{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.85);
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.popup-box{
+width:330px;
+background:#111;
+border:2px solid #00ff66;
+border-radius:15px;
+padding:20px;
+text-align:center;
+box-shadow:0 0 25px #00ff66;
+animation:zoom .3s ease;
+}
+
+.popup-box h2{
+color:#00ff66;
+margin-bottom:10px;
+}
+
+.popup-box p{
+margin-bottom:15px;
+line-height:1.4;
+}
+
+.popup-box button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#00cc66;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+@keyframes zoom{
+from{
+transform:scale(.7);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+<div id="login">
+
+<h1>NERUU PANEL V1</h1>
+
+<input
+id="password"
+type="password"
+placeholder="masukan password">
+
+<button
+class="main-btn"
+onclick="login()">
+Konfirmasi
+</button>
+
+</div>
+
+<div id="menu">
+
+<h1>PANEL PREMIUM</h1>
+
+<div class="switch-item">
+<span>👨🏻‍💻 AimLock 50%</span>
+<button class="switch-btn"
+onclick="toggleSwitch(this)">
+OFF
+</button>
+</div>
+
+<div class="switch-item">
+<span>👨🏻‍💻 Shot assist</span>
+<button class="switch-btn"
+onclick="toggleSwitch(this)">
+OFF
+</button>
+</div>
+
+<div class="switch-item">
+<span>👨🏻‍💻 Regedit 50%</span>
+<button class="switch-btn"
+onclick="toggleSwitch(this)">
+OFF
+</button>
+</div>
+
+<button
+class="main-btn"
+style="margin-top:15px"
+onclick="startProcess()">
+KONFIRMASI
+</button>
+
+<div
+class="progress-box"
+id="progressBox">
+
+<div class="progress">
+<div
+class="bar"
+id="bar"></div>
+</div>
+
+<div
+class="status"
+id="status"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+class="popup"
+id="popup">
+
+<div class="popup-box">
+
+<h2>✅ PROSES BERHASIL</h2>
+
+<p>
+Berhasil disuntik!<br>
+silahkan login ff max
+</p>
+
+<button onclick="closePopup()">
+KONFIRMASI
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+function beep(){
+
+const ctx =
+new(window.AudioContext||window.webkitAudioContext)();
+
+const osc =
+ctx.createOscillator();
+
+osc.frequency.value = 850;
+
+osc.connect(ctx.destination);
+
+osc.start();
+
+setTimeout(()=>{
+osc.stop();
+},120);
+
+}
+
+function login(){
+
+const pass =
+document.getElementById("password").value;
+
+if(pass==="NERUU"){
+
+beep();
+
+document.getElementById("login").style.display="none";
+document.getElementById("menu").style.display="block";
+
+}else{
+
+alert("Contraseña incorrecta");
+
+}
+
+}
+
+function toggleSwitch(btn){
+
+beep();
+
+btn.classList.toggle("active");
+
+btn.innerHTML =
+btn.classList.contains("active")
+? "ON"
+: "OFF";
+
+}
+
+function startProcess(){
+
+beep();
+
+const box =
+document.getElementById("progressBox");
+
+const bar =
+document.getElementById("bar");
+
+const status =
+document.getElementById("status");
+
+box.style.display="block";
+
+bar.style.width="0%";
+
+let value = 0;
+
+const timer = setInterval(()=>{
+
+value++;
+
+bar.style.width = value + "%";
+
+status.innerHTML =
+"Cargando... " + value + "%";
+
+if(value>=100){
+
+clearInterval(timer);
+
+status.innerHTML =
+"✅ Proses berhasil";
+
+beep();
+
+setTimeout(()=>{
+
+document.getElementById("popup").style.display="flex";
+
+},500);
+
+}
+
+},40);
+
+}
+
+function closePopup(){
+
+document.getElementById("popup").style.display="none";
+
+}
+</script>
+
+</body>
+</html>
